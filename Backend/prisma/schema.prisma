@@ -1,0 +1,124 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String  @id @default(cuid())
+  username       String  @unique
+  email          String  @unique
+  password       String
+  profilePicture String?
+  bio            String?
+
+  /**
+   * one–to–many
+   */
+  blogs Blog[]
+
+  /**
+   * many–to–many: likes
+   */
+  likedBlogs Blog[] @relation("BlogLikes")
+
+  /**
+   * many–to–many: bookmarks
+   */
+  savedBlogs Saved[]
+
+  /**
+   * followers / following handled through an explicit join model
+   */
+  followers Follow[] @relation("Followee")
+  following Follow[] @relation("Follower")
+
+  comments Comment[]
+  auth     UserAuth?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model UserAuth {
+  id           String   @id @default(cuid())
+  refreshToken String   @db.Text
+  userId       String   @unique
+  user         User     @relation(fields: [userId], references: [id])
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+/**
+ * explicit join table for follows
+ */
+model Follow {
+  id         String @id @default(cuid())
+  followerId String
+  followeeId String
+
+  follower User @relation("Follower", fields: [followerId], references: [id])
+  followee User @relation("Followee", fields: [followeeId], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+/**
+ * main blog content
+ */
+model Blog {
+  id          String  @id @default(cuid())
+  title       String
+  description String? // <-- New optional column
+  content     Json // Rich‑text JSON (Tiptap / Editor.js)
+  imageUrls   String
+  tags        String //comma seprated tags
+  categories  String //comma seprated categories
+  author      User    @relation(fields: [userId], references: [id])
+  userId      String
+
+  /**
+   * many–to–many: likes
+   */
+  likes User[] @relation("BlogLikes")
+
+  comments Comment[]
+  savedBy  Saved[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Comment {
+  id   String @id @default(cuid())
+  text String
+
+  blogId String
+  blog   Blog   @relation(fields: [blogId], references: [id])
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+model Saved {
+  id String @id @default(cuid())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  blogId String
+  blog   Blog   @relation(fields: [blogId], references: [id])
+
+  createdAt DateTime @default(now())
+}
