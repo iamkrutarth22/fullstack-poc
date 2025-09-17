@@ -1,91 +1,39 @@
-import {  EditorContent, generateHTML, useEditor } from "@tiptap/react";
-import StarterKit from "@tiptap/starter-kit";
-import CustomEditor from "../components/CustomEditor";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import Login from "./Login";
 
 const Home = () => {
-  const extensions = [StarterKit];
-  const content = "<p>Hello World!</p> <pre>system.out.println('hello world')</pre> ";
-
-  const editor = useEditor({
-    extensions,
-    content,
- })
-
-  const obj2={
-  "type": "doc",
-  "content": [
-    {
-      "type": "heading",
-      "attrs": {
-        "level": 2
-      },
-      "content": [
-        {
-          "type": "text",
-          "text": "Getting Started with React"
-        }
-      ]
-    },
-    {
-      "type": "paragraph",
-      "content": [
-        {
-          "type": "text",
-          "text": "React is a JavaScript library for building user interfaces. It allows developers to create reusable UI components."
-        }
-      ]
-    },
-    {
-      "type": "codeBlock",
-      "attrs": {
-        "language": "javascript"
-      },
-      "content": [
-        {
-          "type": "text",
-          "text": "const [count, setCount] = useState(0);"
-        }
-      ]
-    },
-    // {
-    //   "type": "image",
-    //   "attrs": {
-    //     "src": "https://example.com/image.jpg",
-    //     "alt": "React Hook Example",
-    //     "title": "useState example"
-    //   }
-    // },
-    {
-      "type": "blockquote",
-      "content": [
-        {
-          "type": "paragraph",
-          "content": [
-            {
-              "type": "text",
-              "text": "React makes it painless to create interactive UIs."
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
-
-  // const htmlContent=generateHTML(obj2,[StarterKit])
-  // console.log(editor)
-  // console.log(editor?.getJSON())
-  // console.log(htmlContent)
-  
   return (
-    <div>
-      {/* <h1>Home page</h1>
-      <EditorContent editor={editor} />
+    <div className="flex flex-col">
+      <div className="flex justify-between p-4 border border-red-400">
+        <h1>Name</h1>
+        <div className=" flex gap-2">
+          <Dialog>
+            <DialogTrigger>
+              <Button
+                variant="ghost"
+                type="submit"
+                className="rounded-full  self-center cursor-pointer"
+              >
+                Sign In
+              </Button>
+            </DialogTrigger>
 
-       <div dangerouslySetInnerHTML={{ __html: htmlContent }} /> */}
-       {/* <CustomEditor/> */}
-      
-       {/* <div dangerouslySetInnerHTML={{ __html: htmlContent }} /> */}
+            <DialogContent>
+               <DialogHeader>
+                 <DialogTitle className="font-">Welcome Back</DialogTitle>
+               </DialogHeader>
+              <Login/>
+            </DialogContent>
+          </Dialog>
+          <Button
+            type="submit"
+            className="rounded-full w-40 self-center cursor-pointer"
+          >
+            Get Started
+          </Button>
+        </div>
+      </div>
     </div>
   );
 };

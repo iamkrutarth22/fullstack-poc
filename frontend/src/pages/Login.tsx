@@ -115,8 +115,8 @@ const Login = () => {
   }
 
   return (
-    <div className="w-full h-[90vh] border border-red-500 p-4 flex flex-col items-center justify-center">
-      <Card className="max-lg:w-[80%] w-[50%]">
+    <div className="w-full  flex flex-col items-center justify-center">
+      <Card className="w-full ">
         <CardHeader>
           <CardTitle>Login to your account</CardTitle>
           <CardDescription>
@@ -180,7 +180,7 @@ const Login = () => {
               />
 
               <Button type="submit" className="w-full cursor-pointer">
-                Login
+                Sign In
               </Button>
             </form>
           </Form>
