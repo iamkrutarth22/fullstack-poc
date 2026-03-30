@@ -26,7 +26,13 @@ export const authenticateUser = async (
       });
 
     }
-    const token = authHeader;
+    
+    // const token = authHeader;
+
+    const token = authHeader!.startsWith("Bearer ")
+  ? authHeader!.slice(7)
+  : authHeader;
+
     console.log('......................................')
     console.log("decoded token=>>>>",token);
     const decodedToken = jwt.verify(token!, process.env.JWT_SECRET!);
