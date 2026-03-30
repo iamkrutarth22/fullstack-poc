@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button'
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardHeader,
@@ -6,9 +6,9 @@ import {
   CardDescription,
   CardAction,
   CardContent,
-  CardFooter
-} from '../components/ui/card'
-import { useForm, type SubmitHandler } from 'react-hook-form'
+  CardFooter,
+} from "../components/ui/card";
+import { useForm, type SubmitHandler } from "react-hook-form";
 import {
   Form,
   FormControl,
@@ -16,100 +16,107 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import * as yup from 'yup'
-import { yupResolver } from '@hookform/resolvers/yup'
-import { useMutation } from '@tanstack/react-query'
-import { loginHandler } from '@/services/api'
-import { isAxiosError } from 'axios'
-import type { IAuthentication } from '@/models/IStore'
-import { authLoginActions } from '@/store/authSlice'
-import { useDispatch } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useMutation } from "@tanstack/react-query";
+import { loginHandler } from "@/services/api";
+import { isAxiosError } from "axios";
+import type { IAuthentication } from "@/models/IStore";
+import { authLoginActions } from "@/store/authSlice";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 interface IFormLogin {
-  email: string
-  password: string
+  email: string;
+  password: string;
 }
 
 const Login = () => {
-  const dispatch = useDispatch()
-  const navigate = useNavigate()
+  const dispatch= useDispatch();
+  const navigate= useNavigate();
 
   const schema = yup.object({
     email: yup
       .string()
-      .required('Email is required')
-      .email('Must be a valid email address'),
+      .required("Email is required")
+      .email("Must be a valid email address"),
 
     password: yup
       .string()
-      .required('Password is required')
-      .min(6, 'Password must be at least 6 characters')
+      .required("Password is required")
+      .min(6, "Password must be at least 6 characters"),
     // .matches(/[a-z]/, "Password must contain at least one lowercase letter")
     // .matches(/[A-Z]/, "Password must contain at least one uppercase letter")
     // .matches(/[0-9]/, "Password must contain at least one number"),
-  })
+  });
 
   const { mutate, isPending, isError } = useMutation({
     mutationFn: loginHandler,
-    onSuccess: data => {
+    onSuccess: (data) => {
       // console.log(data);
 
-      const auth: IAuthentication = {
-        isAuthenticated: true,
-        accessToken: data.accessToken,
-        refreshToken: data.refreshToken,
-        user: {
-          id: data.user.id,
-          username: data.user.username,
-          email: data.user.email
+      const auth:IAuthentication={
+        isAuthenticated:true,
+        accessToken:data.accessToken,
+        refreshToken:data.refreshToken,
+        user:{
+          id:data.user.id,
+          username:data.user.username,
+          email:data.user.email,
         }
       }
 
       dispatch(authLoginActions.setAuthLogin(auth))
 
-      console.log('auth obj', auth)
+      console.log("auth obj",auth);
     },
-    onError: error => {
+    onError: (error) => {
       if (isAxiosError(error)) {
-        console.log('Error at login:', error.response?.data.message)
+        console.log("Error at login:", error.response?.data.message);
 
         if (error.response?.status === 404) {
-          hookForm.setError('email', {
-            type: 'server',
-            message: error.response?.data.message || 'Login failed'
-          })
+          hookForm.setError("email", {
+            type: "server",
+            message: error.response?.data.message || "Login failed",
+          });
         }
 
         if (error.response?.status === 401) {
-          hookForm.setError('password', {
-            type: 'server',
-            message: error.response?.data.message || 'Login failed'
-          })
+          hookForm.setError("password", {
+            type: "server",
+            message: error.response?.data.message || "Login failed",
+          });
         }
       }
-    }
-  })
+    },
+  });
+
+  
+
 
   const hookForm = useForm<IFormLogin>({
     resolver: yupResolver(schema),
     defaultValues: {
-      email: '', // never undefined
-      password: '' // never undefined
-    }
-  })
+      email: "", // never undefined
+      password: "", // never undefined
+    },
+  });
 
-  const onSubmit: SubmitHandler<IFormLogin> = data => {
-    console.log(data)
-    mutate(data)
+  const onSubmit: SubmitHandler<IFormLogin> = (data) => {
+    console.log(data);
+    mutate(data);
+  };
+
+  if(isPending){
+    return <p>loading .......</p>
   }
 
   return (
-    <div className='w-full  flex flex-col items-center justify-center'>
-      <Card className='w-full '>
+    <div className="w-full  flex flex-col items-center justify-center">
+      <Card className="w-full ">
         <CardHeader>
           <CardTitle>Login to your account</CardTitle>
           <CardDescription>
@@ -121,19 +128,19 @@ const Login = () => {
           <Form {...hookForm}>
             <form
               onSubmit={hookForm.handleSubmit(onSubmit)}
-              className='flex flex-col gap-4'
+              className="flex flex-col gap-4"
             >
               <FormField
                 control={hookForm.control}
-                name='email'
-                rules={{ required: 'Email is required' }}
+                name="email"
+                rules={{ required: "Email is required" }}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder='you@example.com'
-                        type='email'
+                        placeholder="you@example.com"
+                        type="email"
                         {...field}
                       />
                     </FormControl>
@@ -149,20 +156,20 @@ const Login = () => {
 
               <FormField
                 control={hookForm.control}
-                name='password'
-                rules={{ required: 'Password is required' }}
+                name="password"
+                rules={{ required: "Password is required" }}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder='••••••••'
-                        type='password'
+                        placeholder="••••••••"
+                        type="password"
                         {...field}
                       />
                     </FormControl>
                     {!hookForm.formState.errors.password && (
-                      <FormDescription className=''>
+                      <FormDescription className="">
                         Make sure your password is strong.
                       </FormDescription>
                     )}
@@ -172,18 +179,14 @@ const Login = () => {
                 )}
               />
 
-              <Button
-                type='submit'
-                className='w-full cursor-pointer'
-                disabled={isPending}
-              >
-                {isPending ? 'Loading...' : 'Sign In'}
+              <Button type="submit" className="w-full cursor-pointer">
+                Sign In
               </Button>
             </form>
           </Form>
         </CardContent>
 
-        {/* <CardFooter className="flex-col gap-2">
+        <CardFooter className="flex-col gap-2">
           <div className="flex items-center">
             <CardDescription>Don't have an account?</CardDescription>
             <CardAction>
@@ -192,40 +195,10 @@ const Login = () => {
               </Button>
             </CardAction>
           </div>
-        </CardFooter> */}
-        <CardFooter className='flex-col gap-2'>
-          <div className='flex items-center'>
-            <CardDescription>Don't have an account?</CardDescription>
-            <CardAction>
-              <Button variant='link' className='cursor-pointer'>
-                Sign Up
-              </Button>
-            </CardAction>
-          </div>
-
-          <div className='w-full'>
-            <Button
-              variant='outline'
-              className='w-full cursor-pointer flex items-center gap-2'
-              onClick={() => {
-                const msg =
-                  '13YNHBKR/eR4pM4C766IxvHfjVNGCM3BZEoQ4Helv/ooYNyCUHdqD3gEH27j2M/Cps5Ab0jUaXgmmlHi1BK+1876T8lVCSQg7RK43mv3T+pney/sOINP7w6MH/0Q8RPkYV35v40WG5Ru51yM/X7h8A=='
-                const encodedMsg = encodeURIComponent(msg)
-                window.location.href = `http://localhost:3000/#/UDP/UDPLogin?msg=${encodedMsg}`
-              }}
-            >
-              {/* <img
-                src='/assets/GoaOnlineOld.png'
-                alt='Goa Online'
-                style={{ width: 20, height: 20 }}
-              /> */}
-              Login with Goa Online
-            </Button>
-          </div>
         </CardFooter>
       </Card>
     </div>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;

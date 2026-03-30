@@ -1,61 +1,84 @@
 import { Request, Response } from "express";
-import { PrismaClient } from "../../generated/prisma/client";
+import { Prisma, PrismaClient } from "../../generated/prisma/client";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import dotenv from "dotenv";
 
 dotenv.config();
-const prisma = new PrismaClient();
+const prismaClient = new PrismaClient();
 
 export const login = async (req: Request, res: Response) => {
-  const { email, password: enteredPassword } = req.body;
-
-  if (!email || !enteredPassword) {
-    res.status(400).json({ message: "Email and password required" });
-    return;
-  }
+  const email = req.body.email;
+  const enteredPassword = req.body.password;
 
   try {
-    const user = await prisma.user.findUnique({
-      where: { email },
-      include: { auth: true },
-    });
-
-    if (!user || !user.auth) {
-      res.status(404).json({ message: "User not found" });
-      return;
+    if (!email || !enteredPassword) {
+      res.status(400).json({
+        message: "Email and password required",
+      });
     }
 
-    const passwordMatch = await bcrypt.compare(enteredPassword, user.auth.passwordHash);
-    if (!passwordMatch) {
-      res.status(401).json({ message: "Incorrect password" });
-      return;
-    }
-
-    const accessToken = jwt.sign(
-      { email: user.email, userId: user.id },
-      process.env.JWT_SECRET!,
-      { expiresIn: "1h" }
-    );
-
-    const refreshToken = jwt.sign(
-      { userId: user.id },
-      process.env.REFRESH_TOKEN_SECRET!,
-      { expiresIn: "7d" }
-    );
-
-    res.status(200).json({
-      message: "Logged in successfully",
-      accessToken,
-      refreshToken,
-      user: {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-      },
+    const existingUser = await prismaClient.user.findUnique({
+      where: { email: email },
     });
+
+    if (!existingUser) {
+      res.status(404).json({
+        message: "User email not found",
+      });
+    } else {
+      const checkPassword = await bcrypt.compare(
+        enteredPassword,
+        existingUser.password
+      );
+
+      if (!checkPassword) {
+        res.status(401).json({
+          message: "Incorrect password",
+        });
+      }
+
+      const accessToken = jwt.sign(
+        { email: existingUser.email, userId: existingUser.id },
+        process.env.JWT_SECRET!,
+        { expiresIn: "1h" }
+      );
+
+      const refreshToken = jwt.sign(
+        { userId: existingUser.id },
+        process.env.REFRESH_TOKEN_SECRET!,
+        { expiresIn: "7d" }
+      );
+
+      await prismaClient.userAuth.upsert({
+        where: {
+          userId: existingUser.id,
+        },
+        update: {
+          refreshToken: refreshToken,
+        },
+        create: {
+          userId: existingUser.id,
+          refreshToken: refreshToken,
+        },
+      });
+
+      const { password, ...loggedUser } = existingUser;
+      res.status(200).json({
+        message: "user logged in successfully",
+        accessToken: accessToken,
+        refreshToken: refreshToken,
+        user:{
+          id:loggedUser.id,
+          email:loggedUser.email,
+          username:loggedUser.username
+        }
+      });
+    }
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Something went wrong" });
+    console.log(err);
+    res.status(500).json({
+      message: "something went wrong",
+    });
   }
 };
