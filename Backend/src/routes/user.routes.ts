@@ -1,11 +1,11 @@
 import express  from "express";
-import { signup, updateProfile } from "../controllers/userController";
+import { signup } from "../controllers/userController";
 
 const router=express.Router();
 
 
 
 router.post("/signup",signup)
-router.patch("/updateprofile/:userId",updateProfile)
+// router.patch("/updateprofile/:userId",updateProfile)
 
 export default router
