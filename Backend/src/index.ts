@@ -33,3 +33,8 @@ app.use("/api", otpRoute);
 app.listen(port, () => {
   console.log(`[server]: Server running at http://localhost:${port}`);
 });
+
+//cold start
+app.get('/ping', async (req, res) => {
+  res.status(200).json({ message: 'pong' });
+});
