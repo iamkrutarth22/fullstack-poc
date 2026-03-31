@@ -26,7 +26,17 @@ export const login = async (req: Request, res: Response) => {
       return;
     }
 
-    const passwordMatch = await bcrypt.compare(enteredPassword, user.auth.passwordHash);
+    if (!user.isVerified) {
+      res.status(403).json({
+        message: "Email not verified. Please verify your email first.",
+      });
+      return;
+    }
+
+    const passwordMatch = await bcrypt.compare(
+      enteredPassword,
+      user.auth.passwordHash,
+    );
     if (!passwordMatch) {
       res.status(401).json({ message: "Incorrect password" });
       return;
@@ -35,13 +45,13 @@ export const login = async (req: Request, res: Response) => {
     const accessToken = jwt.sign(
       { email: user.email, userId: user.id },
       process.env.JWT_SECRET!,
-      { expiresIn: "1h" }
+      { expiresIn: "1h" },
     );
 
     const refreshToken = jwt.sign(
       { userId: user.id },
       process.env.REFRESH_TOKEN_SECRET!,
-      { expiresIn: "7d" }
+      { expiresIn: "7d" },
     );
 
     res.status(200).json({
