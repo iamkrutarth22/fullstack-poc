@@ -1,7 +1,9 @@
-import { QueryClient } from "@tanstack/react-query";
-import axios from "axios";
+import { QueryClient } from '@tanstack/react-query'
+import axios from 'axios'
+import { apiClient } from './axiosInstance';
 
-export const queryClient = new QueryClient();
+export const queryClient = new QueryClient()
+
 
 export const loginHandler = async ({
   email,
@@ -10,52 +12,48 @@ export const loginHandler = async ({
   email: string;
   password: string;
 }) => {
-  try {
-    const response = await axios.post("http://localhost:8080/api/login", {
-      email,
-      password,
-    });
-
-    console.log(response.data);
-    return response.data; // return just the data
-  } catch (err) {
-    console.error("Error occurred during login:", err);
-    throw err;
-  }
+  const response = await apiClient.post("/login", { email, password });
+  return response.data;
 };
+
+export const logoutHandler = async (refreshToken: string) => {
+  const response = await apiClient.post("/auth/logout", { refreshToken });
+  return response.data;
+};
+
 
 export const updateProfileAPI = async ({
   profile,
   bio,
-  userId,
+  userId
 }: {
-  profile: FileList;
-  bio: string;
-  userId: string;
+  profile: FileList
+  bio: string
+  userId: string
 }) => {
   try {
-    const profilePicture = profile[0];
+    const profilePicture = profile[0]
 
     const response = await axios.patch(
       `http://localhost:8080/api/updateprofile/${userId}`,
       {
         profilePicture,
-        bio,
+        bio
       },
       {
-        headers: { "Content-Type": "multipart/form-data" },
+        headers: { 'Content-Type': 'multipart/form-data' }
       }
-    );
+    )
 
-    console.log(response.data);
+    console.log(response.data)
   } catch (err) {
-    console.log(err);
+    console.log(err)
     if (axios.isAxiosError(err)) {
-      throw err.response;
+      throw err.response
     }
-    throw err;
+    throw err
   }
-};
+}
 
 export const publishBlog = async ({
   title,
@@ -63,37 +61,36 @@ export const publishBlog = async ({
   contentNew,
   imageUrl,
   tags,
-  categories,
+  categories
 }: {
-  title: string;
-  description: string;
-  contentNew: string;
-  tags: string;
-  categories: string;
-  imageUrl: FileList;
+  title: string
+  description: string
+  contentNew: string
+  tags: string
+  categories: string
+  imageUrl: FileList
 }) => {
   try {
-    const imageUrls = imageUrl[0];
+    const imageUrls = imageUrl[0]
     // const content=JSON.parse(contentNew)
-     const response = await axios.post(
+    const response = await axios.post(
       `http://localhost:8080/api/addblog`,
       {
         title,
         description,
-        content:contentNew,
+        content: contentNew,
         tags,
         categories,
         imageUrls
       },
       {
-        headers: { "Content-Type": "multipart/form-data/json" },
+        headers: { 'Content-Type': 'multipart/form-data/json' }
       }
-    );
-
-    console.log(response.data);
-    
+    )
+ 
+    console.log(response.data)
   } catch (err) {
     console.log(err)
-    throw err;
+    throw err
   }
-};
+}

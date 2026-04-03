@@ -6,7 +6,6 @@ const ProtectedRoute = () => {
   const accessToken = useSelector(
     (state: { authLogin: IAuthentication }) => state.authLogin.accessToken
   );
-  console.log("yooo error herrrrrrrrrrrrrreeeee -->> ",accessToken);
 
   if (!accessToken) {
     return <Navigate to="/login" replace />;

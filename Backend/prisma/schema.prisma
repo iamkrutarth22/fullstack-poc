@@ -20,13 +20,15 @@ model User {
 }
 
 model UserAuth {
-  id           String  @id @default(uuid())
-  userId       String  @unique
-  passwordHash String?                      
-  otp          String?                      
-  otpExpiresAt DateTime?                     
-  user         User    @relation(fields: [userId], references: [id])
+  id           String    @id @default(uuid())
+  userId       String    @unique
+  passwordHash String?
+  refreshToken String?   @db.Text
+  otp          String?
+  otpExpiresAt DateTime?
+  user         User      @relation(fields: [userId], references: [id])
 }
+
 
 model OAuthAccount {
   id         String @id @default(uuid())

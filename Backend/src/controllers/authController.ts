@@ -45,14 +45,19 @@ export const login = async (req: Request, res: Response) => {
     const accessToken = jwt.sign(
       { email: user.email, userId: user.id },
       process.env.JWT_SECRET!,
-      { expiresIn: "1h" },
+      { expiresIn: "10s" },
     );
 
     const refreshToken = jwt.sign(
       { userId: user.id },
       process.env.REFRESH_TOKEN_SECRET!,
-      { expiresIn: "7d" },
+      { expiresIn: "1h" },
     );
+
+    await prisma.userAuth.update({
+      where: { userId: user.id },
+      data: { refreshToken: refreshToken },
+    });
 
     res.status(200).json({
       message: "Logged in successfully",

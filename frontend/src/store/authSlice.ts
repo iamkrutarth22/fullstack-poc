@@ -18,10 +18,14 @@ const authSlice = createSlice({
             state.refreshToken= action.payload.refreshToken;
             if (state.user) {
                 state.user.id = action.payload.user.id;
-                state.user.username = action.payload.user.username
-                state.user.email =action.payload.user.email
+                state.user.name = action.payload.user.name;
+                state.user.email =action.payload.user.email;
             }
         },
+        setAccessToken(state, action) {
+      // called by interceptor after silent refresh
+      state.accessToken = action.payload;
+    },
         logout(state){
             state.isAuthenticated = false;
             state.accessToken = null;
@@ -31,7 +35,7 @@ const authSlice = createSlice({
     }
 })
 
-const authReducer=authSlice.reducer
+const authReducer=authSlice.reducer;
 
-export const authLoginActions=authSlice.actions
-export default authReducer
+export const authLoginActions=authSlice.actions;
+export default authReducer;
