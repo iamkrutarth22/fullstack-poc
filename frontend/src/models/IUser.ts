@@ -1,7 +1,5 @@
-export interface IUser{
-    id:string,
-    username:string,
-    email:string,
-    profilePicture?:string;
-    bio?:string
+export interface IUser {
+  id: string;
+  name: string;
+  email: string;
 }

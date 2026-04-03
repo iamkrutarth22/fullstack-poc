@@ -9,20 +9,37 @@ datasource db {
 }
 
 model User {
-  id        String     @id @default(uuid())
-  name      String
-  email     String     @unique
-  createdAt DateTime   @default(now())
-  auth      UserAuth?
-  documents Document[]
+  id            String     @id @default(uuid())
+  name          String
+  email         String     @unique
+  createdAt     DateTime   @default(now())
+  isVerified    Boolean    @default(false)   // ← new: OTP verification
+  auth          UserAuth?
+  oauthAccounts OAuthAccount[]               // ← new: OAuth providers
+  documents     Document[]
 }
 
 model UserAuth {
-  id           String @id @default(uuid())
-  userId       String @unique
-  passwordHash String
-  user         User   @relation(fields: [userId], references: [id])
+  id           String    @id @default(uuid())
+  userId       String    @unique
+  passwordHash String?
+  refreshToken String?   @db.Text
+  otp          String?
+  otpExpiresAt DateTime?
+  user         User      @relation(fields: [userId], references: [id])
 }
+
+
+model OAuthAccount {
+  id         String @id @default(uuid())
+  userId     String
+  provider   String                          // "github" or "google"
+  providerId String                          // user's ID on that platform
+  user       User   @relation(fields: [userId], references: [id])
+
+  @@unique([provider, providerId])           // one account per provider per user
+}
+
 
 model Document {
   id        String            @id @default(uuid())
