@@ -1,6 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-@import url('https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300..700;1,300..700&family=DM+Sans:wght@300;400;500&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300..700;1,300..700&family=DM+Sans:wght@300;400;500&display=swap");
 
 @custom-variant dark (&:is(.dark *));
 
@@ -38,7 +38,7 @@
   --secondary: oklch(0.94 0.008 85);
   --secondary-foreground: oklch(0.28 0.08 155);
   --muted: oklch(0.94 0.008 85);
-  --muted-foreground: oklch(0.50 0.01 85);
+  --muted-foreground: oklch(0.5 0.01 85);
   --accent: oklch(0.94 0.008 85);
   --accent-foreground: oklch(0.15 0.01 85);
   --destructive: oklch(0.577 0.245 27.325);
@@ -57,7 +57,7 @@
   --secondary: oklch(0.22 0.01 85);
   --secondary-foreground: oklch(0.93 0.008 85);
   --muted: oklch(0.22 0.01 85);
-  --muted-foreground: oklch(0.60 0.01 85);
+  --muted-foreground: oklch(0.6 0.01 85);
   --accent: oklch(0.22 0.01 85);
   --accent-foreground: oklch(0.93 0.008 85);
   --destructive: oklch(0.704 0.191 22.216);
@@ -72,12 +72,12 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-family: 'DM Sans', sans-serif;
+    font-family: "DM Sans", sans-serif;
   }
 }
 
 body::before {
-  content: '';
+  content: "";
   position: fixed;
   inset: 0;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
@@ -87,7 +87,7 @@ body::before {
 }
 
 .font-display {
-  font-family: 'Cormorant', serif;
+  font-family: "Cormorant", serif;
 }
 
 .tiptap.ProseMirror {
@@ -100,7 +100,7 @@ pre {
   background: oklch(0.15 0.01 85);
   border-radius: 0.375rem;
   color: oklch(0.93 0.008 85);
-  font-family: 'JetBrains Mono', monospace;
+  font-family: "JetBrains Mono", monospace;
   margin: 1.5rem 0;
   padding: 0.75rem 1rem;
 
@@ -126,4 +126,18 @@ p.is-editor-empty:first-child::before {
 }
 .no-scrollbar::-webkit-scrollbar {
   display: none;
+}
+
+/* 
+.excalidraw .App-menu .App-menu_top  {
+  display: none !important;
+} */
+.default-sidebar-trigger {
+  display: none !important;
+}
+.main-menu-trigger {
+  display: none !important;
+}
+.default-sidebar-trigger {
+  display: none !important;
 }

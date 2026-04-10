@@ -1,3 +1,5 @@
+import TipTap from '@/components/document-editor/TipTap'
+import ExcalidrawCanvas from '@/components/excalidraw-canvas/ExcalidrawCanvas'
 import ProtectedRoute from '@/components/protected-route/ProtectedRoute'
 import AddBlog from '@/pages/AddBlog'
 import GoaOnlineCallback from '@/pages/GoaOnlineCallback'
@@ -35,7 +37,12 @@ export const router = createBrowserRouter([
       {
         path: '/workspace',
         element: <Workspace />
+      },
+      {
+        path: '/doc',
+        element: <TipTap/>
       }
+
     ]
   },
   {
@@ -53,5 +60,10 @@ export const router = createBrowserRouter([
   {
     path: '/verify-otp',
     element: <VerifyOTP />
+  },
+  {
+    path: '/draw',
+    element: <ExcalidrawCanvas />
   }
 ])
+

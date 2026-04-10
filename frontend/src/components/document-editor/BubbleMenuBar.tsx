@@ -1,8 +1,8 @@
 import { BubbleMenu, type Editor } from "@tiptap/react";
 // import CodeBlockLanguageSelector from "./CodeBlockLanguageSelector";
 import { Bold, Italic, TextQuote, WrapText, Strikethrough, Underline } from "lucide-react";
-import { Separator } from "./ui/separator";
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 
 const BubbleMenuBar = ({ editor }: { editor: Editor }) => {
   return (
