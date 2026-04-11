@@ -134,3 +134,33 @@ export const updateDocument = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+export const getDocumentById = async (req: Request, res: Response) => {
+  const userId = req.userId
+  const { id } = req.params
+
+  if (!userId) {
+    res.status(401).json({ message: 'Unauthorized' })
+    return
+  }
+
+  try {
+    const document = await prisma.document.findUnique({
+      where: { id },
+    })
+
+    if (!document) {
+      res.status(404).json({ message: 'Document not found' })
+      return
+    }
+
+    if (document.userId !== userId) {
+      res.status(403).json({ message: 'Forbidden' })
+      return
+    }
+
+    res.status(200).json({ document })
+  } catch (err) {
+    res.status(500).json({ message: 'Internal server error' })
+  }
+}
