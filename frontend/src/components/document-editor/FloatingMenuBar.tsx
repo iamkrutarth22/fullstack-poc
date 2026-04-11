@@ -1,5 +1,5 @@
 import { Editor, FloatingMenu } from "@tiptap/react";
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
 import { Bold, Code, WrapText } from "lucide-react";
 
 type Props = {
