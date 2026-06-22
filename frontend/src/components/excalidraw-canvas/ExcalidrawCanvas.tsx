@@ -1,30 +1,67 @@
-import { Excalidraw, MainMenu } from '@excalidraw/excalidraw'
-import type { ExcalidrawImperativeAPI } from '@excalidraw/excalidraw/types'
+import { Excalidraw, MainMenu } from "@excalidraw/excalidraw";
+import "@excalidraw/excalidraw/index.css";
+import { useRef, useMemo, useEffect, useCallback } from "react";
 
+interface InitialData {
+  elements?: readonly any[];
+  files?: Record<string, any>;
+}
 
-import '@excalidraw/excalidraw/index.css'
-import { useEffect, useState } from 'react'
+type Props = {
+  onChange?: (elements: readonly any[], files: Record<string, any>) => void;
+  initialData?: InitialData;
+};
 
-const ExcalidrawCanvas = () => {
-  const [api, setApi] = useState<ExcalidrawImperativeAPI|null>(null)
+const ExcalidrawCanvas = ({ onChange, initialData }: Props) => {
+  const timeoutRef = useRef<any>(null);
+  const prevVersionRef = useRef<number>(0);
 
+  // ✅ Stable initial data (ONLY used on mount)
+  const safeInitialData = useMemo(() => {
+    return {
+      elements: initialData?.elements ?? [],
+      files: initialData?.files ?? {},
+      appState: {
+        collaborators: new Map(),
+      },
+    };
+    }, []);
 
+  const handleChange = useCallback(
+    (elements: readonly any[], _appState: any, files: any) => {
+      if (!elements.length) return;
+
+      const version = elements.reduce(
+        (acc, el: any) => acc + (el.version || 0),
+        0
+      );
+
+      if (version === prevVersionRef.current) return;
+
+      prevVersionRef.current = version;
+
+      // debounce
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+
+      timeoutRef.current = setTimeout(() => {
+        onChange?.(elements, files);
+      }, 500);
+    },
+    [onChange]
+  );
+
+  // ✅ cleanup
   useEffect(() => {
-    if (api) {
-      console.log('Excalidraw API is ready:', api)
-    }
-    
-  }, [api])
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, []);
 
   return (
-    <div style={{ width: '100%', height: '450px' }}>
+    <div style={{ width: "100%", height: "450px" }}>
       <Excalidraw
-        excalidrawAPI={api => setApi(api)}
-        initialData={{
-          appState: {
-            viewBackgroundColor: '#15161a'
-          }
-        }}
+        initialData={safeInitialData}
+        onChange={handleChange}
         UIOptions={{
           canvasActions: {
             changeViewBackgroundColor: false,
@@ -33,15 +70,15 @@ const ExcalidrawCanvas = () => {
             loadScene: false,
             saveToActiveFile: false,
             saveAsImage: false,
-            toggleTheme: false
+            toggleTheme: false,
           },
-          tools: { image: false }
+          tools: { image: true },
         }}
       >
         <MainMenu />
       </Excalidraw>
     </div>
-  )
-}
+  );
+};
 
-export default ExcalidrawCanvas
+export default ExcalidrawCanvas;

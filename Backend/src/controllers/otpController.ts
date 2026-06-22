@@ -5,7 +5,7 @@ import { sendOTPEmail } from "../utils/mailer";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 dotenv.config();
-
+         
 import bcrypt from "bcrypt";
 
 const prisma = new PrismaClient();
@@ -148,3 +148,5 @@ export const verifyOTP = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Something went wrong" });
   }
 };
+
+

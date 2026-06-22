@@ -4,7 +4,7 @@ dotenv.config();
 
 export const sendOTPEmail = async (to: string, otp: string) => {
   const email = process.env.EMAIL_USER!;
-  
+
   try {
     await transporter.sendMail({
       from: email,

@@ -38,3 +38,41 @@ export const getDocuments = async () => {
 
   return response.data;
 };
+
+export const createDocument = async ({
+  title,
+  content,
+}: {
+  title: string;
+  content: object;
+}) => {
+  const response = await apiClient.post("/add-document", {
+    title,
+    content,
+  });
+  return response.data;
+};
+
+export const updateDocument = async ({
+  id,
+  title,
+  content,
+  version,
+}: {
+  id: string;
+  title: string;
+  content: object;
+  version: number;
+}) => {
+  const response = await apiClient.patch(`/documents/${id}`, {
+    title,
+    content,
+    version,
+  });
+  return response.data;
+};
+
+export const getDocumentById = async (id: string) => {
+  const response = await apiClient.get(`/documents/${id}`)
+  return response.data.document
+}
