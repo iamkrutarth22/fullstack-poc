@@ -24,6 +24,7 @@ import python from 'highlight.js/lib/languages/python'
 import java from 'highlight.js/lib/languages/java'
 // import cpp from "highlight.js/lib/languages/cpp";
 import BubbleMenuBar from './BubbleMenuBar'
+import { use, useEffect } from 'react'
 
 type EditorProps = {
   content: string
@@ -31,7 +32,7 @@ type EditorProps = {
 }
 
 const CustomEditor = ({ content, onChange }: EditorProps) => {
-  console.log('props', content)
+  // console.log('props', content);
   const lowlight = createLowlight()
   lowlight.register('html', html)
   lowlight.register('css', css)
@@ -43,9 +44,6 @@ const CustomEditor = ({ content, onChange }: EditorProps) => {
   const json = content ? JSON.parse(content) : { type: 'doc', content: [] }
 
   const htmlContent = generateHTML(json, [StarterKit, Underline])
-
-  console.log('html content', htmlContent!)
-  // const htmlContent=''
 
   const editor = useEditor({
     extensions: [
@@ -84,11 +82,19 @@ const CustomEditor = ({ content, onChange }: EditorProps) => {
     }
   })
 
+  useEffect(() => {
+    if (!editor) return
+
+    const json = content ? JSON.parse(content) : { type: 'doc', content: [] }
+
+    editor.commands.setContent(json, false)
+    // second param = don't emit update event (prevents loop)
+  }, [content, editor])
+
   if (!editor) return null
 
   return (
     <div className='h-full overflow-'>
-      {/* 🧠 BubbleMenu: Appears when text is selected */}
       {/* <BubbleMenu
         editor={editor}
         className="bg-white border p-2 rounded shadow-sm space-x-2"
@@ -121,8 +127,6 @@ const CustomEditor = ({ content, onChange }: EditorProps) => {
         )}
       </BubbleMenu> */}
       <BubbleMenuBar editor={editor} />
-
-      {/* 🚀 FloatingMenu: Appears when cursor is on empty line or start of block */}
       {/* <FloatingMenu
         editor={editor}
         className="bg-white border p-2 rounded shadow-sm space-x-2"
@@ -152,7 +156,7 @@ const CustomEditor = ({ content, onChange }: EditorProps) => {
       </FloatingMenu> */}
 
       <FloatingMenuBar editor={editor} />
-      {/* ✍️ Editor Content */}
+
       <EditorContent
         editor={editor}
         className='tiptap caret-orange-500 py-2 ProseMirror border p rounded-md h-full  font-serif'
